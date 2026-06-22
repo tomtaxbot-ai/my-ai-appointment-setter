@@ -1,0 +1,20 @@
+# ── CORE ──
+anthropic==0.109.1
+python-dotenv==1.2.2
+
+# ── TELEGRAM BOT ──
+python-telegram-bot==22.7
+
+# ── DATA / BACKEND ──
+supabase==2.31.0            # setter DB: clients, leads, customers, payments, etc.
+
+# ── HTTP ──
+httpx==0.28.1              # GoHighLevel + general HTTP
+requests==2.34.2           # raw Telegram Bot-API sends (notifier, reminders)
+
+# ── SCHEDULING ──
+apscheduler==3.11.2        # background reminders
+
+# ── UTILS ──
+rich==15.0.0              # pretty console output
+tzdata                    # timezone database (zoneinfo)
