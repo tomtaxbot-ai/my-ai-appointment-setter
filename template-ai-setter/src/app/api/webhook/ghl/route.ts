@@ -939,6 +939,26 @@ async function runReplyGeneration(params: {
         metadata: { stage: resolution.stage.id, reason: resolution.reason },
       });
     }
+        if (resolution.advanced && resolution.stage.id === "post_book") {
+      const alreadyNotified = await eventExists(lead.id, "booking_notified");
+      if (!alreadyNotified) {
+        await logEvent({
+          client_id: client.id,
+          lead_id: lead.id,
+          event_type: "booking_notified",
+          metadata: { stage: resolution.stage.id },
+        });
+        const nm = lead.full_name || lead.ig_username || "a lead";
+        const handle = lead.ig_username ? ` (@${lead.ig_username})` : "";
+        const bookedTime =
+          typeof resolution.stageData.booked_time === "string"
+            ? `\nTime: ${resolution.stageData.booked_time}`
+            : "";
+        const link = client.ghl_location_id && lead.ghl_contact_id
+          ? `\nJump in: ${ghlContactLink(client.ghl_location_id, lead.ghl_contact_id)}` : "";
+        await sendTelegramPing(`📅 Job booked — ${nm}${handle}${bookedTime}${link}`);
+      }
+    }
 
     // Sync the captured email onto the GHL contact (once) so when the lead books
     // via the calendar widget, GHL matches them to this SAME contact instead of
