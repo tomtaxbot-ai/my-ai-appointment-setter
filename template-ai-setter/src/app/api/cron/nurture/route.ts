@@ -8,8 +8,9 @@
  *
  * GET /api/cron/nurture   (optional CRON_SECRET bearer auth)
  */
-import { NextRequest, NextResponse } from "next/server";
 import { runNurture } from "@/lib/nurture";
+import { runFollowups } from "@/lib/followups";
+import { runReminders } from "@/lib/reminders";
 import { runFollowups } from "@/lib/followups";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +21,6 @@ export async function GET(req: NextRequest) {
   if (secret && req.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-  const [nurture, followups] = await Promise.all([runNurture(), runFollowups()]);
+    const [nurture, followups] = await Promise.all([runNurture(), runFollowups()]);
   return NextResponse.json({ ok: true, nurture, followups });
 }
