@@ -61,6 +61,10 @@ export type Client = {
   // Whale radar (see lib/stages.ts whale score). When true the setter pings the
   // owner the first time a lead scores as a high-value whale.
   whale_radar_enabled?: boolean;
+  // Review request engine (see lib/reviews.ts). Ships false; needs a
+  // review_link set before it can fire for a client.
+  reviews_enabled?: boolean;
+  review_link?: string | null;
   created_at: string;
   updated_at: string;
 };

@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { runNurture } from "@/lib/nurture";
 import { runFollowups } from "@/lib/followups";
 import { runReminders } from "@/lib/reminders";
+import { runReviews } from "@/lib/reviews";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -21,6 +22,6 @@ export async function GET(req: NextRequest) {
   if (secret && req.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-  const [nurture, followups, reminders] = await Promise.all([runNurture(), runFollowups(), runReminders()]);
-  return NextResponse.json({ ok: true, nurture, followups, reminders });
+  const [nurture, followups, reminders, reviews] = await Promise.all([runNurture(), runFollowups(), runReminders(), runReviews()]);
+  return NextResponse.json({ ok: true, nurture, followups, reminders, reviews });
 }
