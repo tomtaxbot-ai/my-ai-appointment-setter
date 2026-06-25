@@ -31,17 +31,25 @@ create table if not exists public.review_requests (
     sent_at timestamp with time zone
 );
 
+-- duplicate_object doesn't cover "multiple primary keys" (42P16), so check
+-- pg_constraint directly rather than relying on an exception handler.
 do $$ begin
-    alter table public.review_requests add constraint review_requests_pkey PRIMARY KEY (id);
-exception when duplicate_object then null; end $$;
+    if not exists (select 1 from pg_constraint where conname = 'review_requests_pkey') then
+        alter table public.review_requests add constraint review_requests_pkey PRIMARY KEY (id);
+    end if;
+end $$;
 
 do $$ begin
-    alter table public.review_requests add constraint review_requests_client_id_fkey FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE;
-exception when duplicate_object then null; end $$;
+    if not exists (select 1 from pg_constraint where conname = 'review_requests_client_id_fkey') then
+        alter table public.review_requests add constraint review_requests_client_id_fkey FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE;
+    end if;
+end $$;
 
 do $$ begin
-    alter table public.review_requests add constraint review_requests_lead_id_fkey FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE;
-exception when duplicate_object then null; end $$;
+    if not exists (select 1 from pg_constraint where conname = 'review_requests_lead_id_fkey') then
+        alter table public.review_requests add constraint review_requests_lead_id_fkey FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE;
+    end if;
+end $$;
 
 create unique index if not exists review_requests_lead_appt_uniq on public.review_requests using btree (lead_id, appt_at);
 create index if not exists review_requests_due_idx on public.review_requests using btree (status, run_at);
